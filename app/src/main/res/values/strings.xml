@@ -1,0 +1,110 @@
+<resources>
+
+    <string name="app_name">G Cool Service</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="network_error">Network Error</string>
+    <string name="internet_error_warning_message">Make sure that you have an active internet connection</string>
+    <string name="msg_no_internet_connection">No internet connection!</string>
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Convenient &amp; Reliable</string>
+    <string name="slide_1_desc">We bring the joy &amp; happiness to you</string>
+
+    <string name="slide_2_title">Certified</string>
+    <string name="slide_2_desc">Leave your AC worries to us. Your comfort is what our service is</string>
+
+    <string name="slide_3_title">Trustworthy &amp; and Safe</string>
+    <string name="slide_3_desc">People you can trust to keep your AC and family safe</string>
+
+    <string name="slide_4_title">Quality &amp; Transparency</string>
+    <string name="slide_4_desc">Add more life to your AC with us. We are qualified &amp; professional</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="hint_location">Select Your location</string>
+    <string name="submit">Submit</string>
+
+    <array name="acsizes">
+        <item>0.8 ton</item>
+        <item>1.0 ton</item>
+        <item>1.5 ton</item>
+        <item>2.0 ton</item>
+    </array>
+    <array name="actypes">
+        <item>Central ACs</item>
+        <item>Ductless, Mini-Split ACs</item>
+        <item>Window Units</item>
+        <item>Portable Units</item>
+    </array>
+    <array name="acbrands">
+        <item>Haier</item>
+        <item>Blue Star</item>
+        <item>Voltas</item>
+        <item>Lloyd</item>
+        <item>LG</item>
+        <item>Carrier</item>
+        <item>Hitachi</item>
+        <item>Mitsubishi</item>
+        <item>Onida</item>
+        <item>Godrej</item>
+    </array>
+    <array name="acmodels">
+        <item>KS-Q18YNZA</item>
+        <item>FTKF50TV</item>
+        <item>KS-Q18FNXD1</item>
+        <item>BI-5CNHW18PAFU</item>
+    </array>
+
+    <string name="location_api_key_id">AIzaSyCfKKl5LsMfeU2M7-lqCf2qWoNC0rYpilg</string>
+
+    <string name="security_services"><![CDATA[Security & services]]></string>
+    <string name="electronic_electrical_work"><![CDATA[Electronic & electrical work]]></string>
+    <string name="esurrivillance_cctv_work"><![CDATA[Esurrivillance & CCTV work]]></string>
+    <string name="housekeeping">Housekeeping</string>
+    <string name="title_activity_maps2">Map</string>
+    <string name="t_c"><![CDATA[T & C]]></string>
+    <string name="address">BHAINSA PAHADI, SAGAR, SAGAR, Sagar, Madhya Pradesh Madhya Pradesh - 470002</string>
+    <string name="title_activity_dashboard">@string/app_name</string>
+
+    <string name="facebook_app_id">354690488905735</string>
+    <string name="fb_login_protocol_scheme">fb354690488905735</string>
+
+    <string name="razor_api_key">aa</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="login_or_sign_up">Login       or      Sign Up</string>
+    <string name="currency">\u20B9</string>
+    <string name="db">DB</string>
+    <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="gobinto">Cool Service</string>
+    <string name="welcome_to">Welcome to G Cool Service</string>
+    <string name="contact">Contact</string>
+
+    <array name="reasonsforcancellation">
+        <item>Select a reason</item>
+        <item>Product not required</item>
+        <item>I am out of city</item>
+        <item>Cheaper alternative available</item>
+        <item>Review from friends/relatives</item>
+    </array>
+</resources>
