@@ -20,7 +20,7 @@
         android:textColor="@android:color/white"
         android:background="@color/colorPrimary"
         android:padding="10dp"
-        android:textSize="18dp"
+        android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -28,10 +28,11 @@
         android:id="@+id/textView6"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text=" RePair Cost  is Provided after inspection of AC"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
+        android:text=" Repair Cost  is Provided after inspection of AC"
+        android:textColor="@android:color/black"
+        android:background="#F6F0F0"
         android:padding="10dp"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />

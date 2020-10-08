@@ -8,14 +8,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.smartwebarts.acrepair.R;
+import com.smartwebarts.acrepair.category.CategoryListAdapter;
 import com.smartwebarts.acrepair.models.CategoryModel;
 import com.smartwebarts.acrepair.models.IsVisible;
+import com.smartwebarts.acrepair.models.RateCardHeadingModel;
 import com.smartwebarts.acrepair.models.RateCardModel;
 import com.smartwebarts.acrepair.models.SubCategoryModel;
+import com.smartwebarts.acrepair.models.SubSubCategoryModel;
+import com.smartwebarts.acrepair.productlist.ProductAdapter;
+import com.smartwebarts.acrepair.retrofit.UtilMethods;
+import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +40,10 @@ public class RateCardHeaderAdapter extends RecyclerView.Adapter<RateCardHeaderAd
     public RateCardHeaderAdapter(Context context, List<RateCardModel> list) {
         this.context = context;
         this.list = list;
+        for (int i=0;i<list.size();i++)
+        {
+            isVisible.add(new IsVisible());
+        }
     }
 
     @NonNull
@@ -41,13 +56,41 @@ public class RateCardHeaderAdapter extends RecyclerView.Adapter<RateCardHeaderAd
     @Override
     public void onBindViewHolder(@NonNull MYViewHolder holder, int position) {
 //        System.out.println(list.get(position).getRateheading());
-//        holder.tvCategoryName.setText(list.get(position).getRateheading());
+      // holder.tvCategoryName.setText(list.get(position).getRateheading());
 //        holder.rvSubCategory.setVisibility(View.GONE);
-String rate=list.get(position).getName();
+        String heading=list.get(position).getHeading();
+//String rate=list.get(position).getName();
 //System.out.println(rate);
-holder.setData(rate);
+holder.setData(heading);
+//holder.tvCategoryName.setText(list.get(position).getName());
+//holder.rvSubCategory.setVisibility(View.GONE);
+//holder.dropdown.setImageDrawable(context.getDrawable(R.drawable.down_icon));
+//
+//        UtilMethods.INSTANCE.setServices(context, new mCallBackResponse() {
+//            @Override
+//            public void success(String from, String message) {
+//                Type listType = new TypeToken<ArrayList<RateCardModel>>(){}.getType();
+//                List<RateCardModel> list = new Gson().fromJson(message, listType);
+//                setProductRecycler(holder.rvSubCategory, list, RateCardHeaderAdapter.this.list.get(position));
+//            }
+//
+//            @Override
+//            public void fail(String from) {
+//            }
+//        });
+
 
     }
+
+//    private void setProductRecycler(RecyclerView rvSubCategory, List<RateCardModel> list, RateCardModel rateCardModel) {
+//
+//        RateCardAdapter adapter = new RateCardAdapter(context, list, category, rateCardModel);
+//        rvSubCategory.setLayoutManager(new GridLayoutManager(context,3));
+//        rvSubCategory.setAdapter(adapter);
+//
+//
+//
+//    }
 
 
     @Override
@@ -61,11 +104,13 @@ holder.setData(rate);
         RecyclerView rvSubCategory;
         TextView services,price;
         ImageView shootup;
+        ImageView dropdown;
         public MYViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCategoryName=itemView.findViewById(R.id.tv_category_heading);
-            rvSubCategory=itemView.findViewById(R.id.rvSubCategoryRate);
-            shootup = itemView.findViewById(R.id.up);
+//            rvSubCategory=itemView.findViewById(R.id.rvSubCategoryRate);
+//        dropdown=itemView.findViewById(R.id.up);
+//            shootup = itemView.findViewById(R.id.up);
         }
 
         public void setData(String rate) {

@@ -1,5 +1,6 @@
 package com.smartwebarts.acrepair.RateCard;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.smartwebarts.acrepair.R;
+import com.smartwebarts.acrepair.models.CategoryModel;
 import com.smartwebarts.acrepair.models.RateCardModel;
+import com.smartwebarts.acrepair.models.SubSubCategoryModel;
 
 import java.util.List;
 
@@ -54,8 +57,9 @@ holder.setData(rateCardservices,rateCardPrice);
 
         public void setData(String rateCardservices, String rateCardPrice) {
             //set Data in layout file of rate card Layout
+            String rs="Rs.";
             services.setText(rateCardservices);
-            price.setText(rateCardPrice);
+            price.setText(rs+rateCardPrice);
         }
     }
 //set data in rate Card Model List

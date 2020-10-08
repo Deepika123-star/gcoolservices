@@ -23,6 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import com.smartwebarts.acrepair.R;
+import com.smartwebarts.acrepair.RateCard.RateCardHeaderAdapter;
 import com.smartwebarts.acrepair.address.DeliveryProductDetails;
 import com.smartwebarts.acrepair.dashboard.ui.home.SliderImageData;
 import com.smartwebarts.acrepair.models.AddWishListResponse;
@@ -1780,7 +1781,7 @@ public enum UtilMethods {
     }
 
 //Method for rateCArd Services
-    public void setServices(final Context context,final mCallBackResponse callBackResponse) {
+    public void setServices(final Context context , final mCallBackResponse callBackResponse) {
 
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

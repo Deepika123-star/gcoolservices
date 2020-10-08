@@ -5,9 +5,6 @@ public class RateCardModel {
     private String  buingprice;
     private String heading;
 
-    public RateCardModel() {
-    }
-
     public RateCardModel(String name, String buingprice, String heading) {
         this.name = name;
         this.buingprice = buingprice;
