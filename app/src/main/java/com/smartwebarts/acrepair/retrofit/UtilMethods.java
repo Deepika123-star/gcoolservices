@@ -23,7 +23,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import com.smartwebarts.acrepair.R;
-import com.smartwebarts.acrepair.RateCard.RateCardHeaderAdapter;
 import com.smartwebarts.acrepair.address.DeliveryProductDetails;
 import com.smartwebarts.acrepair.dashboard.ui.home.SliderImageData;
 import com.smartwebarts.acrepair.models.AddWishListResponse;
@@ -50,7 +49,6 @@ import com.smartwebarts.acrepair.models.SocialDataCheckModel;
 import com.smartwebarts.acrepair.models.SubCategoryModel;
 import com.smartwebarts.acrepair.models.SubSubCategoryModel;
 import com.smartwebarts.acrepair.models.VendorModel;
-import com.smartwebarts.acrepair.profile.ProfileActivity;
 import com.smartwebarts.acrepair.shared_preference.LoginData;
 import com.smartwebarts.acrepair.utils.ApplicationConstants;
 
@@ -1781,7 +1779,7 @@ public enum UtilMethods {
     }
 
 //Method for rateCArd Services
-    public void setServices(final Context context , final mCallBackResponse callBackResponse) {
+    public void setServices(final Context context , String id, final mCallBackResponse callBackResponse) {
 
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1794,7 +1792,7 @@ public enum UtilMethods {
 
         try {
             EndPointInterface git = APIClient.getClient().create(EndPointInterface.class);
-            Call<List<RateCardModel>> call = git.setServices();
+            Call<List<RateCardModel>> call = git.setServices(id);
             call.enqueue(new Callback<List<RateCardModel>>() {
                 @Override
                 public void onResponse(Call<List<RateCardModel>> call, Response<List<RateCardModel>> response) {
@@ -1828,52 +1826,52 @@ public enum UtilMethods {
 
     }
     //ending of services Method which is created  for rate card
-    public void ratecard(final Context context,final mCallBackResponse callBackResponse) {
-
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.default_progress_dialog);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        ProgressBar progressBar = (ProgressBar)dialog.findViewById(R.id.progress);
-        DoubleBounce doubleBounce = new DoubleBounce();
-        progressBar.setIndeterminateDrawable(doubleBounce);
-        dialog.show();
-
-        try {
-            EndPointInterface git = APIClient.getClient().create(EndPointInterface.class);
-            Call<List<RateCardModel>> call = git.setServices();
-            call.enqueue(new Callback<List<RateCardModel>>() {
-                @Override
-                public void onResponse(Call<List<RateCardModel>> call, Response<List<RateCardModel>> response) {
-                    dialog.dismiss();
-                    String strResponse = new Gson().toJson(response.body());
-                    Log.e("strResponse",strResponse);
-                    if (response.body()!=null) {
-                        if ( response.body().size()>0) {
-                            callBackResponse.success("", strResponse);
-                        }
-                        else {
-                            callBackResponse.fail("NO Data");
-                        }
-                    } else {
-                        callBackResponse.fail("");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<RateCardModel>> call, Throwable t) {
-                    callBackResponse.fail(t.getMessage());
-                    dialog.dismiss();
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            callBackResponse.fail(e.getMessage());
-            dialog.dismiss();
-        }
-
-    }
+//    public void ratecard(final Context context,final mCallBackResponse callBackResponse) {
+//
+//        final Dialog dialog = new Dialog(context);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(R.layout.default_progress_dialog);
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+//        ProgressBar progressBar = (ProgressBar)dialog.findViewById(R.id.progress);
+//        DoubleBounce doubleBounce = new DoubleBounce();
+//        progressBar.setIndeterminateDrawable(doubleBounce);
+//        dialog.show();
+//
+//        try {
+//            EndPointInterface git = APIClient.getClient().create(EndPointInterface.class);
+//            Call<List<RateCardModel>> call = git.setServices();
+//            call.enqueue(new Callback<List<RateCardModel>>() {
+//                @Override
+//                public void onResponse(Call<List<RateCardModel>> call, Response<List<RateCardModel>> response) {
+//                    dialog.dismiss();
+//                    String strResponse = new Gson().toJson(response.body());
+//                    Log.e("strResponse",strResponse);
+//                    if (response.body()!=null) {
+//                        if ( response.body().size()>0) {
+//                            callBackResponse.success("", strResponse);
+//                        }
+//                        else {
+//                            callBackResponse.fail("NO Data");
+//                        }
+//                    } else {
+//                        callBackResponse.fail("");
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<List<RateCardModel>> call, Throwable t) {
+//                    callBackResponse.fail(t.getMessage());
+//                    dialog.dismiss();
+//                }
+//            });
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            callBackResponse.fail(e.getMessage());
+//            dialog.dismiss();
+//        }
+//
+//    }
     public void setAddress(final Context context, String id, String area, String city, String house, String pin, final mCallBackResponse callBackResponse) {
 
         final Dialog dialog = new Dialog(context);

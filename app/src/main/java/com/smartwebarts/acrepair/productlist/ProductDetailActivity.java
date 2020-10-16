@@ -179,12 +179,16 @@ public class ProductDetailActivity extends AppCompatActivity implements BaseSlid
 
                          tvDiscount.setText(getString(R.string.currency) + discount);
 
-                         if (addToCartProductItem.getProductType().equalsIgnoreCase("Non-Vegetarian")) {
-                             ivVeg.setImageDrawable(getDrawable(R.drawable.nonveg));
-                             ivVeg.setVisibility(View.VISIBLE);
-                         } else if (addToCartProductItem.getProductType().equalsIgnoreCase("Vegetarian")){
-                             ivVeg.setImageDrawable(getDrawable(R.drawable.veg));
-                             ivVeg.setVisibility(View.VISIBLE);
+                         if (addToCartProductItem.getProductType()!=null) {
+                             if (addToCartProductItem.getProductType().equalsIgnoreCase("Non-Vegetarian")) {
+                                 ivVeg.setImageDrawable(getDrawable(R.drawable.nonveg));
+                                 ivVeg.setVisibility(View.VISIBLE);
+                             } else if (addToCartProductItem.getProductType().equalsIgnoreCase("Vegetarian")){
+                                 ivVeg.setImageDrawable(getDrawable(R.drawable.veg));
+                                 ivVeg.setVisibility(View.VISIBLE);
+                             } else {
+                                 ivVeg.setVisibility(View.GONE);
+                             }
                          } else {
                              ivVeg.setVisibility(View.GONE);
                          }

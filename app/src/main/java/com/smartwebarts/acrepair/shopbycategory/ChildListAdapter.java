@@ -62,7 +62,7 @@ public class ChildListAdapter extends RecyclerView.Adapter<ChildListAdapter.MyVi
         return list.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView groupHeader;
         ImageView plus, imageView;
         RecyclerView recyclerView;

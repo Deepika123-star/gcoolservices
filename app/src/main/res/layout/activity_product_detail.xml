@@ -438,6 +438,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/ic_emoji"
+                        android:visibility="gone"
                         android:tint="@android:color/black"
                         android:layout_centerVertical="true"/>
                     <LinearLayout
@@ -451,6 +452,7 @@
                             android:textSize="15sp"
                             android:layout_marginStart="20dp"
                             android:textAllCaps="true"
+                            android:visibility="gone"
                             android:text="15 Days Returns"
                             android:textColor="@android:color/black"/>
 
@@ -458,6 +460,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
+                            android:visibility="gone"
                             android:text="If you arent satisfied with this product, return it for a refund."
                             android:textSize="15sp" />
                     </LinearLayout>

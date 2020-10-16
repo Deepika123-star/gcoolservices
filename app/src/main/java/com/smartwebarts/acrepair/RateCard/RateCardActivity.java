@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -15,10 +18,14 @@ import com.google.gson.reflect.TypeToken;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.category.CategoryListAdapter;
 import com.smartwebarts.acrepair.models.CategoryModel;
+import com.smartwebarts.acrepair.models.RateCardHeadingModel;
 import com.smartwebarts.acrepair.models.RateCardModel;
 import com.smartwebarts.acrepair.models.SubCategoryModel;
 import com.smartwebarts.acrepair.retrofit.UtilMethods;
 import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
+import com.smartwebarts.acrepair.shopbycategory.ExpandableListAdapter;
+import com.smartwebarts.acrepair.utils.ApplicationConstants;
+import com.smartwebarts.acrepair.utils.Toolbar_Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,126 +37,49 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class RateCardActivity extends AppCompatActivity {
-    private RecyclerView ratecardRecycler;
 
-   List<RateCardModel> rm;
-    RateCardHeaderAdapter adapter;
+    //initialize
+    private Activity activity;
+    RecyclerView expandableListView;
+   ExpandebleListViewAdapter expandableListAdapter;
+    private List<CategoryModel> list;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate_card);
-        ratecardRecycler = findViewById(R.id.rateCardRecyclerView);
-//
+
+        Toolbar_Set.INSTANCE.setToolbar(this, "Rate Card");
+//        ratecardRecycler = findViewById(R.id.rateCardRecyclerView);
+//        LinearLayoutManager manager = new LinearLayoutManager(this);
+//        manager.setOrientation(LinearLayoutManager.VERTICAL);
+//        ratecardRecycler.setLayoutManager(manager);
 
 
 
-//        // check Internet connection
-//        if (UtilMethods.INSTANCE.isNetworkAvialable(this)) {
-//
-//            UtilMethods.INSTANCE.ratecard(this, new mCallBackResponse() {
-//                @Override
-//                public void success(String from, String message) {
-//                    //define Type Data Type if you don't know which type data come in list
-////                    System.out.println("bnhhg"+message);
-//
-//                    try {
-//                        JSONArray j = new JSONArray(message);
-//                        // setCategory(j);
-//                        for (int i = 0; i <= j.length(); i++) {
-//                            JSONObject j1 = j.getJSONObject(i);
-//                            String name = j1.getString("name");
-//                            String buingprice = j1.getString("buingprice");
-//                            RateCardModel rm1 = new RateCardModel();
-//                            rm1.setName(name);
-//                            rm1.setBuingprice(buingprice);
-//                            System.out.println(name + "-" + buingprice);
-//                            rm.add(rm1);
-//
-//                        }
-//                    } catch (Exception e) {
-//
-//                    }
-//
-////                    Type type = new TypeToken<List<RateCardModel>>(){}.getType();
-////                    List<RateCardModel> list = new Gson().fromJson(message, type);
-//                    adapter = new RateCardHeaderAdapter(RateCardActivity.this, rm);
-//                    ratecardRecycler.setAdapter(adapter);
-//                    adapter.notifyDataSetChanged();
-//
-//                }
-//
-//                @Override
-//                public void fail(String from) {
-//
-//                }
-//            });
-//        } else {
-//            UtilMethods.INSTANCE.internetNotAvailableMessage(this);
-//        }
-
-
-//        category = (CategoryModel) getIntent().getSerializableExtra("");
-//        if (UtilMethods.INSTANCE.isNetworkAvialable(this)) {
-//            UtilMethods.INSTANCE.rateCard(this, category.getId(),new mCallBackResponse() {
-//                @Override
-//                public void success(String from, String message) {
-//                    Type listType = new TypeToken<ArrayList<SubCategoryModel>>(){}.getType();
-//                    List<SubCategoryModel> list = new Gson().fromJson(message, listType);
-//                    setCategory(list);
-//
-//                    List<String> strings = new ArrayList<>();
-//                    for (SubCategoryModel model: list) {
-//                        strings.add(model.getImage());
-//                    }
-//
-//                }
-//
-//                @Override
-//                public void fail(String from) {
-//                }
-//            });
-//
-//        } else {
-//
-//            UtilMethods.INSTANCE.internetNotAvailableMessage(this);
-//        }
-        LinearLayoutManager manager=new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.VERTICAL);
-        ratecardRecycler.setLayoutManager(manager);
-        //set data in list from Rate card Model
-        List<RateCardModel>rateCardModel=new ArrayList<>();
-        RateCardAdapter adapter=new RateCardAdapter(rateCardModel);
-        //Set Data in adapter
-        ratecardRecycler.setAdapter(adapter);
-//        // check Internet connection
-        if (UtilMethods.INSTANCE.isNetworkAvialable(this)) {
-
-            UtilMethods.INSTANCE.setServices(this, new mCallBackResponse() {
-                @Override
-                public void success(String from, String message) {
-                    //define Type Data Type if you don't know which type data come in list
-                    Type type = new TypeToken<List<RateCardModel>>(){}.getType();
-                    List<RateCardModel> list = new Gson().fromJson(message, type);
-                    adapter.setRateCardModels(list);
-                }
-
-                @Override
-                public void fail(String from) {
-
-                }
-            });
-        } else {
-            UtilMethods.INSTANCE.internetNotAvailableMessage(this);
+        SharedPreferences sharedpreferences = getSharedPreferences(ApplicationConstants.INSTANCE.MyPREFERENCES, Context.MODE_PRIVATE);
+        String message = sharedpreferences.getString(ApplicationConstants.INSTANCE.PRODUCT_LIST, "");
+        if (!message.isEmpty()) {
+            Type listType = new TypeToken<ArrayList<CategoryModel>>() {}.getType();
+            list = new Gson().fromJson(message, listType);
         }
+
+        findViews();
+        init();
+
 
     }
 
-//    public void setCategory(List<SubCategoryModel> j){
-//        RateCardAdapter adapter = new RateCardAdapter(rm);
-//
-//        ratecardRecycler.setAdapter(adapter);
-//    }
+    private void findViews() {
+        expandableListView = findViewById(R.id.rateCardRecyclerView);
+    }
 
 
+    private void init() {
+        expandableListAdapter = new ExpandebleListViewAdapter(this, list);
+        expandableListView.setAdapter(expandableListAdapter);
+        expandableListView.setHasFixedSize(true);
+    }
 }

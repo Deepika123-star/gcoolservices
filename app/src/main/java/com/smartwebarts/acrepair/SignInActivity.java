@@ -204,8 +204,14 @@ public class SignInActivity extends AppCompatActivity {
                        dialog.setTitle("Enter Otp");
 
                        AppCompatButton verify = dialog.findViewById(R.id.verify);
+                       AppCompatButton cancel = dialog.findViewById(R.id.cancelbutton);
                        Pinview pinview = dialog.findViewById(R.id.verifyotp);
-
+cancel.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        dialog.dismiss();
+    }
+});
                        verify.setOnClickListener(new View.OnClickListener() {
                            @Override
                            public void onClick(View v) {

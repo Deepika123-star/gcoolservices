@@ -184,11 +184,11 @@ public class CartActivity extends AppCompatActivity {
                 int max = Integer.parseInt("0"+model.getMaxAmt());
                 int deliveryCharges = Integer.parseInt("0"+model.getAmt());
 
-                if (total>min && total <max) {
+                if (total>min && total <=max) {
 
                     if (deliveryCharges!=0) {
                         AlertDialog dialog = new AlertDialog.Builder(this).create();
-                        dialog.setTitle("Delivery Charges");
+                        dialog.setTitle("Service Charges");
                         dialog.setMessage("Your Basket has less than "+getString(R.string.currency)+ max+" So "+getString(R.string.currency)+deliveryCharges+" delivery charges will be applied. Click OK to proceed");
                         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                             @Override
@@ -210,6 +210,8 @@ public class CartActivity extends AppCompatActivity {
                     break;
                 }
             }
+        } else {
+            proceed();
         }
 
     }

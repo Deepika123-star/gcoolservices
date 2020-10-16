@@ -49,6 +49,7 @@ public interface EndPointInterface {
     Call<OTPModel> otp(@Field("mobile") String mobile,
                        @Field("sms") String sms);
 
+
     @POST("api.php")
     @FormUrlEncoded
     Call<OrderedResponse> order(@Field("id") String id,
@@ -247,7 +248,7 @@ public interface EndPointInterface {
                                   @Field("city") String city,
                                   @Field("pin_code") String pin_code);
 //API for Rate Card
-    @GET("API/Getallproduct")
-    Call<List<RateCardModel>>setServices();
+    @GET("API/Getallproduct/{id}")
+    Call<List<RateCardModel>>setServices(@Path("id") String id);
 
 }
