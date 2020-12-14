@@ -22,7 +22,7 @@ public enum ApplicationConstants {
     public String INSTAGRAM = "https://www.instagram.com/invites/contact/?i=1i00yf2y3izpy&utm_content=fq3gvml";
     public String TWITTER = "https://mobile.twitter.com/GCoolService";
     public String LINKEDIN = "https://www.linkedin.com/in/GCoolService-501b201a7";
-    public String YOUTUBE = "https://www.youtube.com/channel/UCY6Gr1DPXTT6tr0t7v4k_3w";
+    public String YOUTUBE = "https://www.youtube.com/channel/";
 
     public String MyPREFERENCES = "prefs";
     public String DELIVERY_PREFS = "delivery";

@@ -189,7 +189,7 @@ public class CartActivity extends AppCompatActivity {
                     if (deliveryCharges!=0) {
                         AlertDialog dialog = new AlertDialog.Builder(this).create();
                         dialog.setTitle("Service Charges");
-                        dialog.setMessage("Your Basket has less than "+getString(R.string.currency)+ max+" So "+getString(R.string.currency)+deliveryCharges+" delivery charges will be applied. Click OK to proceed");
+                        dialog.setMessage("Your Basket has less than "+getString(R.string.currency)+ max+" So "+getString(R.string.currency)+deliveryCharges+" service charges will be applied. Click OK to proceed");
                         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
