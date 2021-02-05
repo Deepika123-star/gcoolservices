@@ -71,12 +71,11 @@
     <string name="housekeeping">Housekeeping</string>
     <string name="title_activity_maps2">Map</string>
     <string name="t_c"><![CDATA[T & C]]></string>
-    <string name="address">BHAINSA PAHADI, SAGAR, SAGAR, Sagar, Madhya Pradesh Madhya Pradesh - 470002</string>
+    <string name="address">BHAINSA PAHADI, SAGAR, Sagar, Madhya Pradesh - 470002</string>
     <string name="title_activity_dashboard">@string/app_name</string>
 
-    <string name="facebook_app_id">354690488905735</string>
-    <string name="fb_login_protocol_scheme">fb354690488905735</string>
-
+    <string name="facebook_app_id">376567940181612</string>
+    <string name="fb_login_protocol_scheme">fb376567940181612</string>
     <string name="razor_api_key">aa</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -99,6 +98,8 @@
     <string name="gobinto">Cool Service</string>
     <string name="welcome_to">Welcome to G Cool Service</string>
     <string name="contact">Contact</string>
+    <string name="service_description">Service Description</string>
+    <string name="default_notification_channel_id">channel_id</string>
 
     <array name="reasonsforcancellation">
         <item>Select a reason</item>

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +19,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.database.SaveProductList;
 import com.smartwebarts.acrepair.database.Task;
@@ -25,10 +27,13 @@ import com.smartwebarts.acrepair.models.ProductDetailImagesModel;
 import com.smartwebarts.acrepair.models.ProductDetailModel;
 import com.smartwebarts.acrepair.models.ProductModel;
 import com.smartwebarts.acrepair.models.UnitModel;
+import com.smartwebarts.acrepair.models.VendorDeliveryChargesModel;
 import com.smartwebarts.acrepair.retrofit.UtilMethods;
 import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
+import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
 import com.smartwebarts.acrepair.utils.ApplicationConstants;
 import com.smartwebarts.acrepair.utils.CustomSlider;
+import com.smartwebarts.acrepair.utils.GPSTracker;
 import com.smartwebarts.acrepair.utils.Toolbar_Set;
 
 public class ProductDetailActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener {
@@ -37,13 +42,15 @@ public class ProductDetailActivity extends AppCompatActivity implements BaseSlid
     private int currentPage = 0;
     private ArrayList<String> sliderImage= new ArrayList<String>();
     private ProductModel addToCartProductItem;
-    private TextView tvName, tvDescription2, tvPrice,tvPricen, tvCurrentPrice, tvDiscount, tvOffer;
+    private TextView tvName, txt_vName,  tvDescription2, tvPrice,tvPricen, tvCurrentPrice, tvDiscount, tvOffer;
     private CardView cvoffer;
     private ImageView ivVeg;
     public static final String ID = "id";
     private String pid;
     private RecyclerView recyclerView;
     private String unit="", unitIn="", currentPrice="0", buingPrice = "0", discount = "0";
+
+    private GPSTracker gpsTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,7 @@ public class ProductDetailActivity extends AppCompatActivity implements BaseSlid
         Toolbar_Set.INSTANCE.setToolbar(this);
         viewPager = findViewById(R.id.viewPager);
         tvName = findViewById(R.id.txt_pName);
+        txt_vName = findViewById(R.id.txt_vName);
 //        tvDescription = findViewById(R.id.txt_pInfo);
         tvDescription2 = findViewById(R.id.tvDescription);
         tvDiscount = findViewById(R.id.txt_discount);
@@ -64,40 +72,14 @@ public class ProductDetailActivity extends AppCompatActivity implements BaseSlid
         cvoffer = (CardView) findViewById(R.id.cvoffer);
         recyclerView = findViewById(R.id.recyclerView);
         pid = getIntent().getExtras().getString(ID);
+
+        gpsTracker = new GPSTracker(this);
+        gpsTracker.getLocation();
+
         getDetails();
     }
 
     private void setUpImageSlider(List<ProductDetailImagesModel> list) {
-
-//        ImageAdapter imageAdapter = new ImageAdapter(this, list);
-
-//        viewPager.setAdapter(imageAdapter);
-//
-//        /*After setting the adapter use the timer */
-//        final Handler handler = new Handler();
-//        final Runnable Update = new Runnable() {
-//            public void run() {
-//                if (currentPage == sliderImage.size()) {
-//                    currentPage = 0;
-//                }
-//                viewPager.setCurrentItem(currentPage++, true);
-//            }
-//        };
-//
-//        Timer timer = new Timer(); // This will create a new Thread
-//
-//        //delay in milliseconds before task is to be executed
-//        long DELAY_MS = 500;
-//
-//        // time in milliseconds between successive task executions.
-//        long PERIOD_MS = 3000;
-//
-//        timer.schedule(new TimerTask() { // task to be scheduled
-//            @Override
-//            public void run() {
-//                handler.post(Update);
-//            }
-//        }, DELAY_MS, PERIOD_MS);
 
         for ( ProductDetailImagesModel data : list) {
             CustomSlider textSliderView = new CustomSlider(this);
@@ -146,7 +128,20 @@ public class ProductDetailActivity extends AppCompatActivity implements BaseSlid
                          List<ProductDetailModel> list = new Gson().fromJson(message, listType);
 
                          addToCartProductItem = new ProductModel(list.get(0));
-                         tvName.setText(addToCartProductItem.getName().trim());
+
+                         MyApplication application = (MyApplication) getApplication();
+                         AppSharedPreferences preferences = new AppSharedPreferences(getApplication());
+                         application.logLeonEvent("View content","Product Viewed " + addToCartProductItem.getName().trim() + " by "+ preferences.getLoginMobile(), 0);
+
+
+                         if (list.get(0)!=null && list.get(0).getVendorName()!=null) {
+                             tvName.setText(list.get(0).getVendorName().trim());
+                         }
+
+                         if (list.get(0)!=null && list.get(0).getVendorId()!=null) {
+                             getDistance(list.get(0).getVendorId());
+                         }
+
 //                         tvDescription.setText(addToCartProductItem.getDescription().trim());
                          tvDescription2.setText(addToCartProductItem.getDescription().trim());
                          if (addToCartProductItem.getUnits()!=null && addToCartProductItem.getUnits().size()>0) {
@@ -222,6 +217,12 @@ public class ProductDetailActivity extends AppCompatActivity implements BaseSlid
              UtilMethods.INSTANCE.internetNotAvailableMessage(this);
          }
      }
+
+    private void getDistance(String id) {
+        AppSharedPreferences preferences = new AppSharedPreferences(getApplication());
+        String distance = UtilMethods.getDistanceByVendorId(preferences, id);
+        txt_vName.setText(String.format("%s km", distance));
+    }
 
     private void setRecycler(List<UnitModel> list) {
         UnitListAdapter adapter = new UnitListAdapter(this, list);

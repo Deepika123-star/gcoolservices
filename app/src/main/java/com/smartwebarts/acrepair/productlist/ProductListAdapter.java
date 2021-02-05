@@ -44,10 +44,12 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     private Context context;
     private List<ProductModel> list;
+    private AppSharedPreferences preferences;
 
     public ProductListAdapter(Context context, List<ProductModel> list) {
         this.context = context;
         this.list = list;
+        this.preferences = new AppSharedPreferences(((Activity) context).getApplication());
     }
 
     @NonNull
@@ -62,9 +64,12 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         try {
 
             MyGlide.with(context, ApplicationConstants.INSTANCE.PRODUCT_IMAGES + list.get(position).getThumbnail(), holder.prodImage);
-
             holder.txt_pName.setText(list.get(position).getName().trim());
-            holder.txt_pInfo.setText(list.get(position).getDescription().trim());
+
+            ((Activity) context).runOnUiThread(() -> {
+                String distance = list.get(position).getDistance(preferences);
+                holder.txt_pInfo.setText(String.format("%s \u2022 %s km", list.get(position).getVendorName().trim(), distance));
+            });
 
             ArrayList<String> units = new ArrayList<>();
             for (UnitModel unitModel: list.get(position).getUnits()) {

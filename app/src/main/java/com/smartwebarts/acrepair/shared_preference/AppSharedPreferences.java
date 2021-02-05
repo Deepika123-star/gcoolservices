@@ -18,6 +18,7 @@ public class AppSharedPreferences extends AndroidViewModel {
 
     private static final String PREF_NAME = "SMS";
     private static final String loginDetails = "loginDetails";
+    private static final String vendorDetails = "vendors";
     private Context context;
 
     SharedPreferences preferences;
@@ -41,6 +42,17 @@ public class AppSharedPreferences extends AndroidViewModel {
     public void setLoginDetails( String value) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(loginDetails, value);
+        editor.apply();
+    }
+
+
+    public String getVendorDetails() {
+        return getPreferences().getString(vendorDetails, "");
+    }
+
+    public void setVendorDetails( String value) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(vendorDetails, value);
         editor.apply();
     }
 

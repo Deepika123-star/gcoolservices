@@ -3,8 +3,10 @@ package com.smartwebarts.acrepair.cart;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -14,12 +16,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Type;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +29,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.SignInActivity;
 import com.smartwebarts.acrepair.address.AddressActivity;
@@ -36,15 +39,19 @@ import com.smartwebarts.acrepair.dashboard.DashboardActivity;
 import com.smartwebarts.acrepair.database.DatabaseClient;
 import com.smartwebarts.acrepair.database.Task;
 import com.smartwebarts.acrepair.models.CouponModels;
+import com.smartwebarts.acrepair.models.VendorDeliveryChargesModel;
+import com.smartwebarts.acrepair.models.VendorModel;
 import com.smartwebarts.acrepair.retrofit.DeliveryChargesModel;
 import com.smartwebarts.acrepair.retrofit.UtilMethods;
 import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
 import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
+import com.smartwebarts.acrepair.utils.GPSTracker;
+import com.smartwebarts.acrepair.utils.LocationAddress;
 import com.smartwebarts.acrepair.utils.Toolbar_Set;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class CartActivity extends AppCompatActivity {
+public class CartActivity extends AppCompatActivity implements ItemAdapter.ItemListener {
 
     private RecyclerView recyclerView;
     private CartAdapter adapter;
@@ -53,21 +60,70 @@ public class CartActivity extends AppCompatActivity {
     private LinearLayout llNormal, llNoCart;
     HashMap<String, String> hashMap = new HashMap<>();
     private List<DeliveryChargesModel> chargesModelList;
+    private List<VendorModel> vendorModelList;
+    GPSTracker gpsTracker;
+    BottomSheetBehavior behavior;
+    RecyclerView vendorRecyclerView;
+    private ItemAdapter mAdapter;
+    CoordinatorLayout coordinatorLayout;
+    private static String vendorid;
+
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("SETTINGS");
+        alertDialog.setMessage("Enable Location Provider! Go to settings menu?");
+        alertDialog.setPositiveButton("Settings",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(
+                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        CartActivity.this.startActivity(intent);
+                    }
+                });
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        gpsTracker = new GPSTracker(this);
+        gpsTracker.getLocation();
+
         recyclerView = findViewById(R.id.recyclerView);
         tvFinalPrice = findViewById(R.id.tvFinalPrice);
         llNormal = findViewById(R.id.ll_normal);
         llNoCart = findViewById(R.id.ll_nocart);
-
         Toolbar_Set.INSTANCE.setToolbar(this, "My Basket");
-
         adapter = new CartAdapter(this, list);
         recyclerView.setAdapter(adapter);
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+        View bottomSheet = findViewById(R.id.bottom_sheet);
+        behavior = BottomSheetBehavior.from(bottomSheet);
+
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // React to state change
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // React to dragging events
+            }
+        });
+
+        vendorRecyclerView = (RecyclerView) findViewById(R.id.recyclerView2);
+        vendorRecyclerView.setHasFixedSize(true);
+        vendorRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getCartList(this, null);
     }
@@ -148,13 +204,34 @@ public class CartActivity extends AppCompatActivity {
 
     public void proceedToCheckout(View view) {
 
+        double latitude, longitude;
+        if (gpsTracker.canGetLocation()) {
+            latitude = gpsTracker.getLatitude();
+            longitude = gpsTracker.getLongitude();
+        } else {
+            showSettingsAlert();
+            return;
+        }
+
         if (UtilMethods.INSTANCE.isNetworkAvialable(this)) {
 
-            UtilMethods.INSTANCE.getDeliveryCharges(this, new mCallBackResponse() {
+            UtilMethods.INSTANCE.getDeliveryChargesAndVendorList(this, latitude, longitude, list.get(0).getId(), new mCallBackResponse() {
                 @Override
                 public void success(String from, String message) {
-                    Type type = new TypeToken<List<DeliveryChargesModel>>(){}.getType();
-                    chargesModelList = new Gson().fromJson(message, type);
+                    VendorDeliveryChargesModel vendorDeliveryChargesModel = new Gson().fromJson(message, VendorDeliveryChargesModel.class);
+                    chargesModelList = vendorDeliveryChargesModel.getDelivery_charge();
+                    vendorModelList = vendorDeliveryChargesModel.getVendors();
+
+                    Comparator<VendorModel> comparator = (left, right) -> {
+                        int intLeft = (int) Double.parseDouble("0"+left.getLocation());
+                        int intRight = (int) Double.parseDouble("0"+right.getLocation());
+                        return intLeft - intRight; // use your logic
+                    };
+                    Collections.sort(vendorModelList, comparator);
+
+                    mAdapter = new ItemAdapter(CartActivity.this,vendorModelList);
+                    vendorRecyclerView.setAdapter(mAdapter);
+
                     addDeliveryCharges();
                 }
 
@@ -190,30 +267,24 @@ public class CartActivity extends AppCompatActivity {
                         AlertDialog dialog = new AlertDialog.Builder(this).create();
                         dialog.setTitle("Service Charges");
                         dialog.setMessage("Your Basket has less than "+getString(R.string.currency)+ max+" So "+getString(R.string.currency)+deliveryCharges+" service charges will be applied. Click OK to proceed");
-                        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                proceed();
-                            }
-                        });
+                        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", (dialog1, which) -> dialog1.dismiss());
+                        dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", (dialog12, which) -> selectVendor());
                         dialog.show();
                     } else {
-                        proceed();
+                        selectVendor();
                     }
 
                     break;
                 }
             }
         } else {
-            proceed();
+            selectVendor();
         }
 
+    }
+
+    private void selectVendor() {
+        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     private void proceed() {
@@ -256,6 +327,7 @@ public class CartActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddressActivity.class);
         intent.putExtra(AddressActivity.PRODUCT_LIST, list);
         intent.putExtra(AddressActivity.HASHMAP, hashMap);
+        intent.putExtra(AddressActivity.VENDOR_ID, vendorid);
         int total = Integer.parseInt(tvFinalPrice.getText().toString().trim().replaceAll("[^0-9]", ""));
 
         for (DeliveryChargesModel model : chargesModelList) {
@@ -310,5 +382,12 @@ public class CartActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
         finishAffinity();
+    }
+
+    @Override
+    public void onItemClick(VendorModel item) {
+        vendorid = item.getId();
+        proceed();
+        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 }

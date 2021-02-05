@@ -1,5 +1,6 @@
 package com.smartwebarts.acrepair.retrofit;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,15 +14,21 @@ import android.widget.ProgressBar;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.gson.Gson;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import com.google.gson.reflect.TypeToken;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.address.DeliveryProductDetails;
 import com.smartwebarts.acrepair.dashboard.ui.home.SliderImageData;
@@ -48,9 +55,12 @@ import com.smartwebarts.acrepair.models.SignUpModel;
 import com.smartwebarts.acrepair.models.SocialDataCheckModel;
 import com.smartwebarts.acrepair.models.SubCategoryModel;
 import com.smartwebarts.acrepair.models.SubSubCategoryModel;
+import com.smartwebarts.acrepair.models.VendorDeliveryChargesModel;
 import com.smartwebarts.acrepair.models.VendorModel;
+import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
 import com.smartwebarts.acrepair.shared_preference.LoginData;
 import com.smartwebarts.acrepair.utils.ApplicationConstants;
+import com.smartwebarts.acrepair.vendors.VendorActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -338,7 +348,7 @@ public enum UtilMethods {
     }
 
 
-    public void order(final Context context, DeliveryProductDetails data, String totalamount, String discount, final mCallBackResponse callBackResponse) {
+    public void order(final Context context, DeliveryProductDetails data, String totalamount, String discount, String vendorid, final mCallBackResponse callBackResponse) {
 
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -354,7 +364,7 @@ public enum UtilMethods {
             Call<OrderedResponse> call = git.order(data.getId(),
                      data.getQty(), data.getProId(), data.getAmount(), data.getName(), data.getUnit(), data.getUnit_in()
             ,data.getThumbnail(), data.getMobile(), data.getOrderid(), "1", data.getPaymentmethod(), data.getAddress(),
-                    data.getLandmark(), data.getPincode(), data.getUserdate(), data.getUsertime(), totalamount, discount);
+                    data.getLandmark(), data.getPincode(), data.getUserdate(), data.getUsertime(), totalamount, discount, vendorid);
             call.enqueue(new Callback<OrderedResponse>() {
                 @Override
                 public void onResponse(Call<OrderedResponse> call, Response<OrderedResponse> response) {
@@ -1532,7 +1542,7 @@ public enum UtilMethods {
         }
     }
 
-    public void vendor(Context context, String newText, mCallBackResponse callBackResponse) {
+    public void vendor(Context context, String mlat, String mlng, mCallBackResponse callBackResponse) {
 
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1545,7 +1555,7 @@ public enum UtilMethods {
 
         try {
             EndPointInterface git = APIClient.getClient().create(EndPointInterface.class);
-            Call<List<VendorModel>> call = git.getVendors();
+            Call<List<VendorModel>> call = git.getVendors(mlat, mlng);
             call.enqueue(new Callback<List<VendorModel>>() {
                 @Override
                 public void onResponse(@NotNull Call<List<VendorModel>> call, @NotNull Response<List<VendorModel>> response) {
@@ -1633,7 +1643,7 @@ public enum UtilMethods {
         }
     }
 
-    public void getDeliveryCharges(Context context,  mCallBackResponse callBackResponse) {
+    public void getDeliveryChargesAndVendorList(Context context, double latitude, double longitude, String id, mCallBackResponse callBackResponse) {
 
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1646,32 +1656,26 @@ public enum UtilMethods {
 
         try {
             EndPointInterface git = APIClient.getClient().create(EndPointInterface.class);
-            Call<List<DeliveryChargesModel>> call = git.getDeliveryCharges();
-            call.enqueue(new Callback<List<DeliveryChargesModel>>() {
+            Call<VendorDeliveryChargesModel> call = git.getDeliveryChargesAndVendorList(latitude +"", longitude +"", id);
+            call.enqueue(new Callback<VendorDeliveryChargesModel>() {
                 @Override
-                public void onResponse(@NotNull Call<List<DeliveryChargesModel>> call, @NotNull Response<List<DeliveryChargesModel>> response) {
+                public void onResponse(@NotNull Call<VendorDeliveryChargesModel> call, @NotNull Response<VendorDeliveryChargesModel> response) {
                     dialog.dismiss();
                     String strResponse = new Gson().toJson(response.body());
                     Log.e("strResponse",strResponse);
                     if (response.body()!=null) {
-                        if (response.body().size()>0 ) {
-
                             SharedPreferences sharedpreferences = context.getSharedPreferences(ApplicationConstants.INSTANCE.DELIVERY_PREFS, Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedpreferences.edit();
                             editor.putString(ApplicationConstants.INSTANCE.DELIVERY_CHARGES, strResponse);
                             editor.apply();
                             callBackResponse.success("", strResponse);
-                        }
-                        else {
-                            callBackResponse.fail("No data");
-                        }
                     } else {
                         callBackResponse.fail("No data");
                     }
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<List<DeliveryChargesModel>> call, @NotNull Throwable t) {
+                public void onFailure(@NotNull Call<VendorDeliveryChargesModel> call, @NotNull Throwable t) {
                     callBackResponse.fail(t.getMessage());
                     dialog.dismiss();
                 }
@@ -1681,6 +1685,51 @@ public enum UtilMethods {
             e.printStackTrace();
             callBackResponse.fail(e.getMessage());
             dialog.dismiss();
+        }
+    }
+
+    public void api_distance(Context context, double latitude, double longitude, String id, mCallBackResponse callBackResponse) {
+
+//        final Dialog dialog = new Dialog(context);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(R.layout.default_progress_dialog);
+//        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+//        ProgressBar progressBar = (ProgressBar)dialog.findViewById(R.id.progress);
+//        DoubleBounce doubleBounce = new DoubleBounce();
+//        progressBar.setIndeterminateDrawable(doubleBounce);
+//        dialog.show();
+
+        try {
+            EndPointInterface git = APIClient.getClient().create(EndPointInterface.class);
+            Call<VendorDeliveryChargesModel> call = git.api_distance(latitude +"", longitude +"", id);
+            call.enqueue(new Callback<VendorDeliveryChargesModel>() {
+                @Override
+                public void onResponse(@NotNull Call<VendorDeliveryChargesModel> call, @NotNull Response<VendorDeliveryChargesModel> response) {
+//                    dialog.dismiss();
+                    String strResponse = new Gson().toJson(response.body());
+                    Log.e("strResponse",strResponse);
+                    if (response.body()!=null) {
+                        SharedPreferences sharedpreferences = context.getSharedPreferences(ApplicationConstants.INSTANCE.DELIVERY_PREFS, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.putString(ApplicationConstants.INSTANCE.DELIVERY_CHARGES, strResponse);
+                        editor.apply();
+                        callBackResponse.success("", strResponse);
+                    } else {
+                        callBackResponse.fail("No data");
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<VendorDeliveryChargesModel> call, @NotNull Throwable t) {
+                    callBackResponse.fail(t.getMessage());
+//                    dialog.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            callBackResponse.fail(e.getMessage());
+//            dialog.dismiss();
         }
     }
 
@@ -1917,6 +1966,68 @@ public enum UtilMethods {
             dialog.dismiss();
         }
 
+    }
+
+    public static String getDistanceByVendorId(AppSharedPreferences preferences, String id) {
+
+        String distance = "0";
+        String s = preferences.getVendorDetails();
+        if (s!=null && !s.isEmpty()) {
+            Type listType = new TypeToken<ArrayList<VendorModel>>(){}.getType();
+            List<VendorModel> list = new Gson().fromJson(preferences.getVendorDetails(), listType);
+            for (VendorModel vendorModel : list) {
+
+                if (vendorModel.getId().equalsIgnoreCase(id)) {
+                    distance =  ""+vendorModel.getLocation();
+                    break;
+                }
+            }
+        }
+
+        return distance;
+    }
+
+    public void updateAccessToken(Context context, String token,final mCallBackResponse callBackResponse) {
+        if (UtilMethods.INSTANCE.isNetworkAvialable(context)) {
+//            final Dialog dialog = getProgressDialog(context);
+//            dialog.show();
+            try {
+
+                AppSharedPreferences preferences = new AppSharedPreferences(((Activity) context).getApplication());
+                if (preferences.getLoginUserLoginId().isEmpty()) {
+                    return;
+                }
+                EndPointInterface git = APIClient.getClient().create(EndPointInterface.class);
+                Call<MessageModel> call = git.updateAccessToken(preferences.getLoginUserLoginId(), token);
+
+                call.enqueue(new Callback<MessageModel>() {
+                    @Override
+                    public void onResponse(@NotNull Call<MessageModel> call, @NotNull Response<MessageModel> response) {
+//                        dialog.dismiss();
+//                        String strResponse = new Gson().toJson(response.body());
+//                        Log.e("strResponse",strResponse);
+//                        if (response.body()!=null && response.body().getStatus()!=null && response.body().getStatus().equalsIgnoreCase("success")) {
+//                            callBackResponse.success("", response.body().getMessage());
+//                        } else {
+//                            callBackResponse.fail(""+response.body().getStatus());
+//                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call<MessageModel> call, @NotNull Throwable t) {
+//                        callBackResponse.fail(t.getMessage());
+//                        dialog.dismiss();
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+//                callBackResponse.fail(e.getMessage());
+//                dialog.dismiss();
+            }
+        } else {
+            UtilMethods.INSTANCE.internetNotAvailableMessage(context);
+        }
     }
 
 }

@@ -46,6 +46,9 @@ public class ProductDetailModel implements Serializable {
     @SerializedName("vendor_id")
     @Expose
     private String vendorId;
+    @SerializedName("vendor_name")
+    @Expose
+    private String vendorName;
 
     public String getUnitIn() {
         return unitIn;
@@ -151,4 +154,11 @@ public class ProductDetailModel implements Serializable {
         this.vendorId = vendorId;
     }
 
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
 }

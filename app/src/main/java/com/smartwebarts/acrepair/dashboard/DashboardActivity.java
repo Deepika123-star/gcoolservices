@@ -11,20 +11,25 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.ui.AppBarConfiguration;
 
-import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
@@ -45,39 +50,32 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.Window;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.smartwebarts.acrepair.BuildConfig;
 import com.smartwebarts.acrepair.ContactUsActivity;
+import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.R;
-import com.smartwebarts.acrepair.shopbycategory.ShopByCategoryActivity;
 import com.smartwebarts.acrepair.SignInActivity;
 import com.smartwebarts.acrepair.WebViewActivity;
+import com.smartwebarts.acrepair.cart.CartActivity;
+import com.smartwebarts.acrepair.database.DatabaseClient;
 import com.smartwebarts.acrepair.history.MyHistoryActivity;
 import com.smartwebarts.acrepair.profile.ProfileActivity;
+import com.smartwebarts.acrepair.pushnotification.AccessToken;
+import com.smartwebarts.acrepair.retrofit.UtilMethods;
+import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
+import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
+import com.smartwebarts.acrepair.shopbycategory.ShopByCategoryActivity;
+import com.smartwebarts.acrepair.utils.ApplicationConstants;
+import com.smartwebarts.acrepair.utils.GPSTracker;
 import com.smartwebarts.acrepair.utils.Toolbar_Set;
 import com.smartwebarts.acrepair.vendors.VendorActivity;
 import com.smartwebarts.acrepair.wallet.WalletActivity;
 import com.smartwebarts.acrepair.wishlist.WishListActivity;
-import com.smartwebarts.acrepair.cart.CartActivity;
-import com.smartwebarts.acrepair.database.DatabaseClient;
-import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
-import com.smartwebarts.acrepair.utils.ApplicationConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -87,10 +85,20 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     private NavigationView navigationView;
     private GoogleApiClient googleApiClient;
 
+    GPSTracker gpsTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        MyApplication application = (MyApplication) getApplication();
+        AppSharedPreferences preferences = new AppSharedPreferences(getApplication());
+        application.logLeonEvent("Dashboard", "Dashboard Viewed " + "by "+ preferences.getLoginMobile(), 0);
+
+
+        gpsTracker = new GPSTracker(this);
+        gpsTracker.getLocation();
 
         drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -112,27 +120,51 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 R.id.nav_tools, R.id.nav_share, R.id.nav_send)
                 .setDrawerLayout(drawer)
                 .build();
+
+        runOnUiThread(() -> AccessToken.updateAccessToken(DashboardActivity.this));
+    }
+
+    private void search() {
+        if (UtilMethods.INSTANCE.isNetworkAvialable(this)) {
+            double mlat = gpsTracker.getLatitude();
+            double mlng = gpsTracker.getLongitude();
+            UtilMethods.INSTANCE.vendor(this, mlat+"", mlng+"",  new mCallBackResponse() {
+                @Override
+                public void success(String from, String message) {
+                    AppSharedPreferences appSharedPreferences = new AppSharedPreferences(getApplication());
+                    appSharedPreferences.setVendorDetails(message);
+                }
+
+                @Override
+                public void fail(String from) {
+
+                }
+            });
+        } else {
+            UtilMethods.INSTANCE.internetNotAvailableMessage(this);
         }
+    }
 
     private void turnongps() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && hasGPSDevice(this)) {
-//            Toast.makeText(getApplicationContext(),"Gps already enabled",Toast.LENGTH_SHORT).show();
-            //getActivity().finish();
+            /*gps already enabled*/
+
+            if (gpsTracker.canGetLocation()) {
+                search();
+            }
         }
-        // Todo Location Already on  ... end
 
         if(!hasGPSDevice(this)){
-//            Toast.makeText(getApplicationContext(),"Gps not Supported",Toast.LENGTH_SHORT).show();
         }
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && hasGPSDevice(this)) {
-            // Log.e("Neha","Gps already enabled");
-//            Toast.makeText(getApplicationContext(),"Gps not enabled",Toast.LENGTH_SHORT).show();
+
+            /*gps already enabled*/
             enableLoc();
-        }else{
-            // Log.e("Neha","Gps already enabled");
-//            Toast.makeText(getApplicationContext(),"Gps already enabled",Toast.LENGTH_SHORT).show();
+        } else{
+
+            /*gps already enabled*/
         }
     }
 
@@ -218,7 +250,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         if (preferences.getLoginUserName()!=null && !preferences.getLoginUserName().isEmpty()) {
             String[] s = preferences.getLoginUserName().trim().split("\\s+");
-            tvUser.setText("Welcome " +s[0]);
+            tvUser.setText(String.format("Welcome %s", s[0]));
         } else {
             nav_Menu.findItem(R.id.nav_gallery).setVisible(false);
             nav_Menu.findItem(R.id.my_wishlist).setVisible(false);
@@ -228,14 +260,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         }
 
         if (preferences.getLoginEmail()!=null && !preferences.getLoginEmail().isEmpty()) {
-            tvEmail.setText("" +preferences.getLoginEmail());
+            tvEmail.setText(String.format("%s", preferences.getLoginEmail()));
         } else {
-            tvEmail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(DashboardActivity.this, SignInActivity.class));
-                }
-            });
+            tvEmail.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, SignInActivity.class)));
         }
 
     }
@@ -360,7 +387,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 break;
             }
             case R.id.share_app: {
-AppSharedPreferences preferences =new AppSharedPreferences(getApplication());
+            AppSharedPreferences preferences =new AppSharedPreferences(getApplication());
                 String referlink = "https://acrepair.page.link?" +
                         "apn=" + BuildConfig.APPLICATION_ID +
                         "&st=My Refer Link" +
@@ -435,7 +462,7 @@ AppSharedPreferences preferences =new AppSharedPreferences(getApplication());
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         LoginManager.getInstance().logOut();
-        AccessToken.setCurrentAccessToken(null);
+        com.facebook.AccessToken.setCurrentAccessToken(null);
 
         FirebaseAuth.getInstance().signOut();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -443,13 +470,10 @@ AppSharedPreferences preferences =new AppSharedPreferences(getApplication());
                 .requestEmail()
                 .build();
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(DashboardActivity.this, gso);
-        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
-                AppSharedPreferences preferences = new AppSharedPreferences(DashboardActivity.this.getApplication());
-                preferences.logout(DashboardActivity.this);
-                dialog.dismiss();
-            }
+        mGoogleSignInClient.signOut().addOnCompleteListener(task -> {
+            AppSharedPreferences preferences = new AppSharedPreferences(DashboardActivity.this.getApplication());
+            preferences.logout(DashboardActivity.this);
+            dialog.dismiss();
         });
     }
 
@@ -479,7 +503,7 @@ AppSharedPreferences preferences =new AppSharedPreferences(getApplication());
 //                Toast.makeText(getApplicationContext(), ""+tasks.size(), Toast.LENGTH_SHORT).show();
                 int size = tasks!=null?tasks.size():0;
                 TextView cartItemsCount = findViewById(R.id.cartItemsCount);
-                cartItemsCount.setText(""+size);
+                cartItemsCount.setText(String.format("%s", size));
             }
         }
 
@@ -515,16 +539,14 @@ AppSharedPreferences preferences =new AppSharedPreferences(getApplication());
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case 101:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    turnongps();
-                }  else {
-                    turnongps();
-                }
-                return;
+        if (requestCode == 101) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                turnongps();
+            } else {
+                turnongps();
+            }
+            return;
         }
     }
 }

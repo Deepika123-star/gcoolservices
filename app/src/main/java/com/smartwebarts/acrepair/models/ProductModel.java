@@ -2,6 +2,8 @@ package com.smartwebarts.acrepair.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.smartwebarts.acrepair.retrofit.UtilMethods;
+import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
 
 import java.io.Serializable;
 import java.util.List;
@@ -47,9 +49,14 @@ public class ProductModel implements Serializable {
     @SerializedName("vendor_id")
     @Expose
     private String vendorId;
+    @SerializedName("vendor_name")
+    @Expose
+    private String vendorName;
     @SerializedName("wishlist")
     @Expose
     private boolean wishlist;
+
+    private String distance;
 
     public ProductModel() {
     }
@@ -194,5 +201,22 @@ public class ProductModel implements Serializable {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public String getDistance(AppSharedPreferences preferences) {
+        distance = UtilMethods.getDistanceByVendorId(preferences, getVendorId());
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 }

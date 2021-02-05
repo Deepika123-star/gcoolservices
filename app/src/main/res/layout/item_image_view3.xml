@@ -33,6 +33,7 @@
         android:layout_height="35dp"
         app:cardBackgroundColor="@color/quantum_yellow"
         app:cardCornerRadius="17dp"
+        android:visibility="gone"
         android:layout_alignParentEnd="true">
 
         <LinearLayout

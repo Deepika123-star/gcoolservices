@@ -26,11 +26,19 @@ import com.smartwebarts.acrepair.utils.MyGlide;
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.MyViewHolder> {
 
     private Context context;
-    private List<HomeProductsModel> list;
+//    private List<HomeProductsModel> list;
+    private List<SubCategoryModel> list;
+    private CategoryModel categoryModel;
 
-    public GridAdapter(Context context, List<HomeProductsModel> list) {
+//    public GridAdapter(Context context, List<HomeProductsModel> list) {
+//        this.context = context;
+//        this.list = list;
+//    }
+
+    public GridAdapter(Context context, List<SubCategoryModel> list, CategoryModel categoryModel) {
         this.context = context;
         this.list = list;
+        this.categoryModel = categoryModel;
     }
 
     @NonNull
@@ -42,17 +50,31 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
-        MyGlide.with(context, ApplicationConstants.INSTANCE.PRODUCT_IMAGES + list.get(position).getThumbnail(), holder.imageView);
+        MyGlide.with(context, ApplicationConstants.INSTANCE.CATEGORY_IMAGES + list.get(position).getImage(), holder.imageView);
 
         holder.textView.setText(list.get(position).getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ProductDetailActivity.class);
-                intent.putExtra(ProductDetailActivity.ID, list.get(position).getId());
+                Intent intent = new Intent(context, ProductListActivity2.class);
+                intent.putExtra(ProductListActivity2.CID, categoryModel.getId());
+                intent.putExtra(ProductListActivity2.SID, list.get(position).getId());
+                intent.putExtra(ProductListActivity2.SNAME, list.get(position).getName());
                 context.startActivity(intent);
             }
         });
+
+//        MyGlide.with(context, ApplicationConstants.INSTANCE.PRODUCT_IMAGES + list.get(position).getThumbnail(), holder.imageView);
+//
+//        holder.textView.setText(list.get(position).getName());
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(context, ProductDetailActivity.class);
+//                intent.putExtra(ProductDetailActivity.ID, list.get(position).getId());
+//                context.startActivity(intent);
+//            }
+//        });
     }
 
     @Override
@@ -60,7 +82,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.MyViewHolder> 
         return list.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
         TextView textView;

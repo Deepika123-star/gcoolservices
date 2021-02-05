@@ -14,12 +14,15 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.models.ProductModel;
 import com.smartwebarts.acrepair.retrofit.UtilMethods;
 import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
+import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
 import com.smartwebarts.acrepair.utils.Toolbar_Set;
 
 public class ProductListActivity2 extends AppCompatActivity {
@@ -47,6 +50,12 @@ public class ProductListActivity2 extends AppCompatActivity {
         rvProductGrid = findViewById(R.id.rvProductGrid);
         tv_subsubCategory = findViewById(R.id.subsubCategory);
         tv_subsubCategory.setText(strName);
+
+        MyApplication application = (MyApplication) getApplication();
+        AppSharedPreferences preferences = new AppSharedPreferences(application);
+        application.logLeonEvent("Category", "Category Viewed " + strName + " by "+ preferences.getLoginMobile(), 0);
+
+
         tv_subsubCategory.setVisibility(View.GONE);
 
 
@@ -59,7 +68,16 @@ public class ProductListActivity2 extends AppCompatActivity {
                 public void success(String from, String message) {
                     Type listType = new TypeToken<ArrayList<ProductModel>>(){}.getType();
                     List<ProductModel> list = new Gson().fromJson(message, listType);
-                    setProduct(list);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AppSharedPreferences preferences = new AppSharedPreferences(getApplication());
+                            //sort list on the basis of distance
+                            Collections.sort(list, (l1, l2) -> (int) (Double.parseDouble(l1.getDistance(preferences)) - Double.parseDouble(l2.getDistance(preferences))));
+                            setProduct(list);
+                        }
+                    });
                 }
 
                 @Override

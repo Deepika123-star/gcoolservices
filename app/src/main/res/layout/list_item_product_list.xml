@@ -78,7 +78,7 @@
                     android:fontFamily="sans-serif-smallcaps"
                     android:gravity="center|left"
                     android:ellipsize="end"
-                    android:text="Product Description"
+                    android:text="@string/service_description"
                     android:textSize="13sp" />
 
                 <RelativeLayout

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.SignInActivity;
 import com.smartwebarts.acrepair.retrofit.UtilMethods;
@@ -69,6 +70,12 @@ public class SignupFragment extends Fragment {
     }
 
     private void requestSignUp(View v) {
+
+
+        MyApplication application = (MyApplication) requireActivity().getApplication();
+        application.logLeonEvent("Complete registration", "Complete registration " + " by" + mobile.getText().toString(), 0);
+
+
         if (UtilMethods.INSTANCE.isNetworkAvialable(requireActivity())) {
             UtilMethods.INSTANCE.signup(requireActivity(), fullname.getText().toString(),
                     email.getText().toString(), mobile.getText().toString(), password.getText().toString(), new mCallBackResponse() {

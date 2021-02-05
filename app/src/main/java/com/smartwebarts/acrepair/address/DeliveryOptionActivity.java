@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.dashboard.DashboardActivity;
 import com.smartwebarts.acrepair.database.DatabaseClient;
@@ -63,9 +64,10 @@ public class DeliveryOptionActivity extends AppCompatActivity  implements Paymen
     public static final String PINCODE  = "pincode";
     public static final String AMOUNT  = "amount";
     public static final String HASHMAP  = "hashmap";
+    public static final String VENDOR_ID = "vendorid";
 
 
-    private String address, landmark, pincode, date, time = "1", paymentmethod = "", amount;
+    private String address, landmark, pincode, date, time = "1", paymentmethod = "", amount, vendorid;
     private ArrayList<Task> list;
     private HashMap<String, String> hashMap;
     private List<TimeModel> timinglist;
@@ -218,6 +220,7 @@ public class DeliveryOptionActivity extends AppCompatActivity  implements Paymen
         landmark = getIntent().getExtras().getString(LANDMARK, "");
         pincode = getIntent().getExtras().getString(PINCODE, "");
         amount = getIntent().getExtras().getString(AMOUNT, "");
+        vendorid = getIntent().getExtras().getString(VENDOR_ID, "");
         hashMap = (HashMap<String, String>) getIntent().getExtras().get(HASHMAP);
         System.out.println(hashMap);
 
@@ -392,6 +395,9 @@ public class DeliveryOptionActivity extends AppCompatActivity  implements Paymen
     private void hitServiceOrder(List<DeliveryProductDetails> products) {
         if (UtilMethods.INSTANCE.isNetworkAvialable(this)) {
 
+            MyApplication application = (MyApplication) getApplication();
+            AppSharedPreferences preferences1 = new AppSharedPreferences(application);
+            application.logLeonEvent("Purchase", "Purchased"+ " by "+ preferences1.getLoginMobile(), 0);
 
             int tempTotal = 0;
             int discount = 0;
@@ -431,7 +437,7 @@ public class DeliveryOptionActivity extends AppCompatActivity  implements Paymen
 //            progressBar.setIndeterminateDrawable(doubleBounce);
 //            dialog.show();
             for (DeliveryProductDetails product : products){
-                UtilMethods.INSTANCE.order(this, product, amount, ""+discount, new mCallBackResponse() {
+                UtilMethods.INSTANCE.order(this, product, amount, ""+discount, vendorid, new mCallBackResponse() {
                     @Override
                     public void success(String from, String message) {
 //                        Toast.makeText(DeliveryOptionActivity.this, "Ordered", Toast.LENGTH_SHORT).show();

@@ -78,7 +78,7 @@
                     android:fontFamily="@font/opensans_regular"
                     android:gravity="center|left"
                     android:ellipsize="end"
-                    android:text="Product Description"
+                    android:text="@string/service_description"
                     android:textColor="@color/hintColor"
                     android:textSize="13sp" />
                 <RelativeLayout

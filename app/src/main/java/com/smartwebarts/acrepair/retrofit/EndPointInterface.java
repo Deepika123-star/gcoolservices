@@ -2,11 +2,14 @@ package com.smartwebarts.acrepair.retrofit;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -34,6 +37,7 @@ import com.smartwebarts.acrepair.models.SignUpModel;
 import com.smartwebarts.acrepair.models.SocialDataCheckModel;
 import com.smartwebarts.acrepair.models.SubCategoryModel;
 import com.smartwebarts.acrepair.models.SubSubCategoryModel;
+import com.smartwebarts.acrepair.models.VendorDeliveryChargesModel;
 import com.smartwebarts.acrepair.models.VendorModel;
 import com.smartwebarts.acrepair.shared_preference.LoginData;
 
@@ -70,8 +74,8 @@ public interface EndPointInterface {
                                 @Field("userdate") String userdate,
                                 @Field("usertime") String usertime,
                                 @Field("totalamount") String totalamount,
-                                @Field("discount") String discount
-                         );
+                                @Field("discount") String discount,
+                                @Field("vendorid") String vendorid);
 
     @POST("api.php")
     @FormUrlEncoded
@@ -191,15 +195,23 @@ public interface EndPointInterface {
     @GET("API/api_specificproduct/{id}")
     Call<List<ProductDetailModel>> getProductDetails(@Path("id") String id);
 
-    @GET("API/api_vendors")
-    Call<List<VendorModel>> getVendors();
+    @GET("API/api_vendors/{lat}/{lng}")
+    Call<List<VendorModel>> getVendors(@Path("lat") String lat,
+                                       @Path("lng") String lng);
 
     @POST("API/api_timeslots")
     @FormUrlEncoded
     Call<List<TimeModel>> getTimeSlot(@Field("pincode") String pincode);
 
-    @GET("API/api_deliverycharges")
-    Call<List<DeliveryChargesModel>> getDeliveryCharges();
+    @GET("API/api_deliverycharges2/{lat}/{lng}/{id}")
+    Call<VendorDeliveryChargesModel> getDeliveryChargesAndVendorList(@Path("lat") String lat,
+                                                                     @Path("lng") String lng,
+                                                                     @Path("id") String id);
+
+    @GET("API/api_distance/{lat}/{lng}/{id}")
+    Call<VendorDeliveryChargesModel> api_distance(@Path("lat") String lat,
+                                                                     @Path("lng") String lng,
+                                                                     @Path("id") String id);
 
     @GET("API/api_productimages/{id}")
     Call<List<ProductDetailImagesModel>> getProductImages(@Path("id") String id);
@@ -247,8 +259,11 @@ public interface EndPointInterface {
                                   @Field("address") String house_number,
                                   @Field("city") String city,
                                   @Field("pin_code") String pin_code);
-//API for Rate Card
+    //API for Rate Card
     @GET("API/Getallproduct/{id}")
     Call<List<RateCardModel>>setServices(@Path("id") String id);
 
+    @GET("API/updateAccessToken/{id}/{access_token}")
+    Call<MessageModel> updateAccessToken(@Path("id") String id,
+                                         @Path("access_token") String _token);
 }

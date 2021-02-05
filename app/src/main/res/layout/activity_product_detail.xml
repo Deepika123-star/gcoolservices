@@ -84,15 +84,49 @@
                                 android:layout_margin="5dp"
                                 android:orientation="vertical">
 
-                                <TextView
+                                <RelativeLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_margin="5dp"
-                                    android:fontFamily="@font/bold"
-                                    android:id="@+id/txt_pName"
-                                    android:text="Product Summary"
-                                    android:textColor="@android:color/black"
-                                    android:textStyle="bold|normal" />
+                                    android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentStart="true"
+                                        android:layout_toStartOf="@+id/ll_vendor"
+                                        android:orientation="vertical">
+
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="5dp"
+                                            android:fontFamily="@font/bold"
+                                            android:id="@+id/txt_pName"
+                                            android:text="Product Summary"
+                                            android:textColor="@android:color/black"
+                                            android:textStyle="bold|normal" />
+
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_vendor"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentEnd="true"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginBottom="5dp"
+                                            android:fontFamily="@font/bold"
+                                            android:id="@+id/txt_vName"
+                                            android:textColor="@color/text_color"
+                                            android:textStyle="bold|normal" />
+
+                                    </LinearLayout>
+                                </RelativeLayout>
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -293,7 +327,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="15sp"
                             android:layout_marginStart="20dp"
-                            android:text="Product Description"
+                            android:text="@string/service_description"
                             android:textAllCaps="true"
                             android:textColor="@android:color/black"/>
 

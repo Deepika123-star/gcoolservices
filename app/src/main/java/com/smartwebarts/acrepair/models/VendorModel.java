@@ -2,6 +2,8 @@ package com.smartwebarts.acrepair.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.smartwebarts.acrepair.retrofit.UtilMethods;
+import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
 
 import java.io.Serializable;
 
@@ -82,6 +84,22 @@ public class VendorModel implements Serializable {
     @SerializedName("category_type")
     @Expose
     private Object categoryType;
+    @SerializedName("location")
+    @Expose
+    private String location;
+    @SerializedName("lat")
+    @Expose
+    private double lat;
+    @SerializedName("lng")
+    @Expose
+    private double lng;
+    @SerializedName("vlat")
+    @Expose
+    private double vlat;
+    @SerializedName("nlng")
+    @Expose
+    private double vlng;
+    private String distance;
 
     public String getId() {
         return id;
@@ -283,4 +301,39 @@ public class VendorModel implements Serializable {
         this.categoryType = categoryType;
     }
 
+    public double getLocation() {
+        if (!location.equalsIgnoreCase("nil"))
+        return Double.parseDouble(String.valueOf(Math.round(Double.parseDouble(location)/1000 * 100) / 100.0));
+        else return distanceBetweenTwoPoint(lat, lng, vlat, vlng);
+    }
+
+    public static double distanceBetweenTwoPoint(double srcLat, double srcLng, double desLat, double desLng) {
+        double earthRadius = 3958.75;
+        double dLat = Math.toRadians(desLat - srcLat);
+        double dLng = Math.toRadians(desLng - srcLng);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(srcLat))
+                * Math.cos(Math.toRadians(desLat)) * Math.sin(dLng / 2)
+                * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double dist = earthRadius * c;
+
+        double meterConversion = 1609;
+        double kilometerConversion =  meterConversion/1000;
+        return (int) (dist * kilometerConversion);
+    }
+
+
+    public String getDistance(AppSharedPreferences preferences) {
+        distance = UtilMethods.getDistanceByVendorId(preferences, getId());
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

@@ -31,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.smartwebarts.acrepair.dashboard.DashboardActivity;
 import com.smartwebarts.acrepair.intro.Session;
 import com.smartwebarts.acrepair.intro.WelcomeActivity;
@@ -92,6 +93,8 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+        FirebaseMessaging.getInstance().subscribeToTopic("all");
         super.onCreate(savedInstanceState);
 
         //Remove Title

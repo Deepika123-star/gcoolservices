@@ -22,8 +22,6 @@ public class CustomSlider extends BaseSliderView {
     public View getView() {
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(getContext()).inflate(R.layout.home_slider, null);
         target = (ImageView) v.findViewById(R.id.image);
-
-
         bindEventAndShow(v, target);
         return v;
     }

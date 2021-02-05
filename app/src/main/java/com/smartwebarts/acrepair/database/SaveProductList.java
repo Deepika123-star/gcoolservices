@@ -1,17 +1,22 @@
 package com.smartwebarts.acrepair.database;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import com.google.gson.Gson;
+import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.productlist.ProductDetailActivity;
+import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
 
 public class SaveProductList extends AsyncTask<String, String, String> {
 
-    private List<Task> Tasks;
-    private Context context;
+    private final List<Task> Tasks;
+    private final Context context;
 
     public SaveProductList(Context context, List<Task> Tasks) {
         this.Tasks = Tasks;
@@ -25,6 +30,12 @@ public class SaveProductList extends AsyncTask<String, String, String> {
 
     @Override
     protected String doInBackground(String... strings) {
+
+        DatabaseClient.getmInstance(context)
+                .getAppDatabase()
+                .taskDao()
+                .deleteAll();
+
 
         DatabaseClient.getmInstance(context)
                 .getAppDatabase()
@@ -49,6 +60,13 @@ public class SaveProductList extends AsyncTask<String, String, String> {
                 }
             });
             dialog.show();
+        }
+
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            MyApplication application = (MyApplication) activity.getApplication();
+            AppSharedPreferences preferences = new AppSharedPreferences(application);
+            application.logLeonEvent("Add to cart", "Add to Cart " + new Gson().toJson(this.Tasks) + " by "+ preferences.getLoginMobile(), 0);
         }
     }
 }

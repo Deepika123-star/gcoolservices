@@ -36,16 +36,12 @@ public class VendorAdapter extends RecyclerView.Adapter<VendorAdapter.MyViewHold
     public void onBindViewHolder(@NonNull VendorAdapter.MyViewHolder holder, final int position) {
 
         String name = list.get(position).getShopName().trim();
-
         holder.categoryName.setText(name);
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ProductListActivity3.class);
-                intent.putExtra(ProductListActivity3.VID, list.get(position));
-                context.startActivity(intent);
-            }
+        holder.distance.setText(String.format("%s km", list.get(position).getLocation()));
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductListActivity3.class);
+            intent.putExtra(ProductListActivity3.VID, list.get(position));
+            context.startActivity(intent);
         });
     }
 
@@ -59,14 +55,12 @@ public class VendorAdapter extends RecyclerView.Adapter<VendorAdapter.MyViewHold
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
-
-        TextView categoryName;
-
+    static class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView categoryName, distance;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-
             categoryName = itemView.findViewById(R.id.categoryName);
+            distance = itemView.findViewById(R.id.distance);
         }
     }
 }

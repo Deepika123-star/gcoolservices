@@ -38,6 +38,7 @@ import static com.smartwebarts.acrepair.address.DeliveryOptionActivity.*;
 
 public class AddressActivity extends AppCompatActivity {
 
+    public static final String VENDOR_ID = "vendorid";
     private static final String TAG = AddressActivity.class.getSimpleName();
     private static final int AUTOCOMPLETE_REQUEST_CODE = 101;
     TextInputEditText txtHouse, txtPin, txtCity, txtArea;
@@ -52,6 +53,7 @@ public class AddressActivity extends AppCompatActivity {
     private String amount;
     private HashMap<String, String> hashMap;
     GPSTracker gpsTracker;
+    private String vendorid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class AddressActivity extends AppCompatActivity {
         Toolbar_Set.INSTANCE.setToolbar(this, "Add Address");
 
         list = (ArrayList<Task>) getIntent().getExtras().getSerializable(PRODUCT_LIST);
+        vendorid = getIntent().getExtras().getString(VENDOR_ID);
         hashMap = (HashMap<String, String>) getIntent().getExtras().get(HASHMAP);
         System.out.println(hashMap);
         amount = getIntent().getExtras().getString(AMOUNT, "");
@@ -154,8 +157,7 @@ public class AddressActivity extends AppCompatActivity {
     }
 
     public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                AddressActivity.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("SETTINGS");
         alertDialog.setMessage("Enable Location Provider! Go to settings menu?");
         alertDialog.setPositiveButton("Settings",
@@ -181,6 +183,7 @@ public class AddressActivity extends AppCompatActivity {
         if (validateform()) {
             Intent intent = new Intent(this, DeliveryOptionActivity.class);
             intent.putExtra(DeliveryOptionActivity.PRODUCT_LIST, list);
+            intent.putExtra(DeliveryOptionActivity.VENDOR_ID, vendorid);
 
             intent.putExtra(ADDRESS,  txtHouse.getText().toString().trim() + " " +
                                             txtArea.getText().toString().trim() + " " +

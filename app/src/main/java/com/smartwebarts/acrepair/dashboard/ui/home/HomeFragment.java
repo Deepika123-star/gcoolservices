@@ -113,7 +113,7 @@ public class HomeFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     private void setTopRecycler(List<CategoryModel> list) {
         TopAdapter adapter = new TopAdapter(requireActivity(), list);
-        recyclerView.setLayoutManager(new GridLayoutManager(requireActivity(), 3));
+        recyclerView.setLayoutManager(new GridLayoutManager(requireActivity(), 4));
         recyclerView.setAdapter(adapter);
     }
 

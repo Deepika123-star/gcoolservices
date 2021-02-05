@@ -94,31 +94,50 @@ public class BottomAdapter extends RecyclerView.Adapter<BottomAdapter.MyViewHold
             }
         });
 
-        UtilMethods.INSTANCE.homeProducts(context, list.get(position).getId(), new mCallBackResponse() {
+
+        UtilMethods.INSTANCE.subCategories(context, list.get(position).getId(), new mCallBackResponse() {
             @Override
             public void success(String from, String message) {
-                Type listType = new TypeToken<ArrayList<HomeProductsModel>>(){}.getType();
-                List<HomeProductsModel> list = new Gson().fromJson(message, listType);
-                setCategoryRecycler(holder.recyclerViewCategory,list);
+                Type listType = new TypeToken<ArrayList<SubCategoryModel>>(){}.getType();
+                List<SubCategoryModel> sublist = new Gson().fromJson(message, listType);
+                setCategoryRecycler(holder.recyclerViewCategory,sublist, list.get(position));
             }
             @Override
             public void fail(String from) {
             }
         });
+
+//        UtilMethods.INSTANCE.homeProducts(context, list.get(position).getId(), new mCallBackResponse() {
+//            @Override
+//            public void success(String from, String message) {
+//                Type listType = new TypeToken<ArrayList<HomeProductsModel>>(){}.getType();
+//                List<HomeProductsModel> list = new Gson().fromJson(message, listType);
+//                setCategoryRecycler(holder.recyclerViewCategory,list);
+//            }
+//            @Override
+//            public void fail(String from) {
+//            }
+//        });
     }
 
-    private void setCategoryRecycler(RecyclerView recyclerView, List<HomeProductsModel> list) {
-        GridAdapter adapter = new GridAdapter(context,list);
+    private void setCategoryRecycler(RecyclerView recyclerView, List<SubCategoryModel> list, CategoryModel categoryModel) {
+        GridAdapter adapter = new GridAdapter(context,list, categoryModel);
         recyclerView.setLayoutManager(new GridLayoutManager(context,3));
         recyclerView.setAdapter(adapter);
     }
+
+//    private void setCategoryRecycler(RecyclerView recyclerView, List<HomeProductsModel> list) {
+//        GridAdapter adapter = new GridAdapter(context,list);
+//        recyclerView.setLayoutManager(new GridLayoutManager(context,3));
+//        recyclerView.setAdapter(adapter);
+//    }
 
     @Override
     public int getItemCount() {
         return list.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
         TextView categoryName, tvViewAll;
