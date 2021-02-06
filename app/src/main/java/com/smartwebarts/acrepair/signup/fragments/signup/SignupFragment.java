@@ -68,10 +68,7 @@ public class SignupFragment extends Fragment {
         });
         return view;
     }
-
     private void requestSignUp(View v) {
-
-
         MyApplication application = (MyApplication) requireActivity().getApplication();
         application.logLeonEvent("Complete registration", "Complete registration " + " by" + mobile.getText().toString(), 0);
 
@@ -97,7 +94,7 @@ public class SignupFragment extends Fragment {
 
                         @Override
                         public void fail(String from) {
-                            Toast.makeText(getActivity(), ""+from, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Number Already exist.."/*+from*/, Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {

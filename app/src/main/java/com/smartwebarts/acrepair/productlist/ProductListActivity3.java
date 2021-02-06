@@ -1,5 +1,6 @@
 package com.smartwebarts.acrepair.productlist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.smartwebarts.acrepair.R;
+import com.smartwebarts.acrepair.RateCard.RateCardActivity;
 import com.smartwebarts.acrepair.models.ProductModel;
 import com.smartwebarts.acrepair.models.VendorModel;
 import com.smartwebarts.acrepair.retrofit.UtilMethods;
@@ -99,5 +101,10 @@ public class ProductListActivity3 extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Toolbar_Set.INSTANCE.getCartList(this);
+    }
+
+    public void ratecard(View view) {
+        Intent intent=new Intent(ProductListActivity3.this, RateCardActivity.class);
+        startActivity(intent);
     }
 }

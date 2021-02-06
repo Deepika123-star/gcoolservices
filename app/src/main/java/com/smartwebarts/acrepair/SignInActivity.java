@@ -98,7 +98,6 @@ public class SignInActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         tvMobile = findViewById(R.id.mobile);
         tvPassword = findViewById(R.id.password);
-
 //        if (getArguments() != null) {
 //            data = (OTPModel) getArguments().getSerializable("data");
 //            mobileNumber = getArguments().getString("mobile", "");

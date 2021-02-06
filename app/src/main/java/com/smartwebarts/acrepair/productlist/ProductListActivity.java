@@ -1,25 +1,17 @@
 package com.smartwebarts.acrepair.productlist;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.R;
 import com.smartwebarts.acrepair.RateCard.RateCardActivity;
@@ -32,6 +24,11 @@ import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
 import com.smartwebarts.acrepair.shared_preference.AppSharedPreferences;
 import com.smartwebarts.acrepair.utils.Toolbar_Set;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ProductListActivity extends AppCompatActivity {
 
     RecyclerView rvProductList, rvProductGrid;
@@ -39,6 +36,7 @@ public class ProductListActivity extends AppCompatActivity {
     CategoryModel category;
     SubCategoryModel subCategory;
     TextView tv_subsubCategory;
+    TextView ratecard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +45,7 @@ public class ProductListActivity extends AppCompatActivity {
 
         rvProductList = findViewById(R.id.rvProductList);
         rvProductGrid = findViewById(R.id.rvProductGrid);
+        ratecard = findViewById(R.id.ratecard);
 
         tv_subsubCategory = findViewById(R.id.subsubCategory);
 
@@ -55,6 +54,7 @@ public class ProductListActivity extends AppCompatActivity {
         subSubCategory = (SubSubCategoryModel) getIntent().getSerializableExtra("subsubcategory");
         tv_subsubCategory.setText(subSubCategory.getName());
         MyApplication application = (MyApplication) getApplication();
+
         AppSharedPreferences preferences = new AppSharedPreferences(application);
         application.logLeonEvent("Category", "Category Viewed " + subSubCategory.getName() + " by "+ preferences.getLoginMobile(), 0);
 
@@ -89,14 +89,19 @@ public class ProductListActivity extends AppCompatActivity {
 
             UtilMethods.INSTANCE.internetNotAvailableMessage(this);
         }
-
+//        ratecard.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent=new Intent(ProductListActivity.this, RateCardActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     private void setProduct(List<ProductModel> list) {
         ProductListGridAdapter adapter = new ProductListGridAdapter(this, list);
         rvProductGrid.setLayoutManager(new GridLayoutManager(this, 2));
         rvProductGrid.setAdapter(adapter);
-
         ProductListAdapter adapter2 = new ProductListAdapter(this, list);
         rvProductList.setLayoutManager(new GridLayoutManager(this, 1));
         rvProductList.setAdapter(adapter2);
@@ -120,7 +125,8 @@ public class ProductListActivity extends AppCompatActivity {
         Toolbar_Set.INSTANCE.getCartList(this);
     }
 
-    public void rateCard(View view) {
+
+    public void ratecard(View view) {
         Intent intent=new Intent(ProductListActivity.this, RateCardActivity.class);
         startActivity(intent);
     }

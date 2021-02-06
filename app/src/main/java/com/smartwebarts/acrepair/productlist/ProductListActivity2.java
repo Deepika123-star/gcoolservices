@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import com.smartwebarts.acrepair.MyApplication;
 import com.smartwebarts.acrepair.R;
+import com.smartwebarts.acrepair.RateCard.RateCardActivity;
 import com.smartwebarts.acrepair.models.ProductModel;
 import com.smartwebarts.acrepair.retrofit.UtilMethods;
 import com.smartwebarts.acrepair.retrofit.mCallBackResponse;
@@ -118,5 +120,10 @@ public class ProductListActivity2 extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Toolbar_Set.INSTANCE.getCartList(this);
+    }
+
+    public void ratecard(View view) {
+        Intent intent=new Intent(ProductListActivity2.this, RateCardActivity.class);
+        startActivity(intent);
     }
 }
