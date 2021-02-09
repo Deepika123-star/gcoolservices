@@ -22,6 +22,51 @@
           }
         },
         {
+          "client_id": "400259976731-m7a5mu1m93fa16o7ukh7apdr4qpj8ci5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gcoolservices.acrepair",
+            "certificate_hash": "2fb35d79bbd13fec1a3ed33ffb13c09db9604440"
+          }
+        },
+        {
+          "client_id": "400259976731-b93gqen6breusbna2o1e4ut44emum4gg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYpUi7EWzPJ0Bp02MOZWth2lUiDjbuwoA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "400259976731-b93gqen6breusbna2o1e4ut44emum4gg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400259976731:android:cc7ce0180193802f97f2be",
+        "android_client_info": {
+          "package_name": "com.gcoolservices.acrepairpartners"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "400259976731-vg772p5ob804u6m0rb4vllb2v9djceoe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gcoolservices.acrepairpartners",
+            "certificate_hash": "deabadeca4c5ed881877265d410781be50457746"
+          }
+        },
+        {
           "client_id": "400259976731-b93gqen6breusbna2o1e4ut44emum4gg.apps.googleusercontent.com",
           "client_type": 3
         }

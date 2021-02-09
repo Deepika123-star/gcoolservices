@@ -78,7 +78,6 @@
             android:layout_margin="@dimen/_5sdp"
             android:layout_weight="1"
             android:onClick="payment"
-            android:visibility="gone"
             android:text="ONLINE PAYMENT" />
 
         <Button

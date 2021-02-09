@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/numberfragment"
-        android:name="com.smartwebarts.acrepair.signup.fragments.number.NumberFragment"
+        android:name="com.gcoolservices.acrepair.signup.fragments.number.NumberFragment"
         android:label="number_fragment"
         tools:layout="@layout/number_fragment">
 
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/OTPFragment"
-        android:name="com.smartwebarts.acrepair.signup.fragments.otp.OtpFragment"
+        android:name="com.gcoolservices.acrepair.signup.fragments.otp.OtpFragment"
         android:label="otp_fragment"
         tools:layout="@layout/otp_fragment" >
         <action
@@ -34,6 +34,6 @@
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.smartwebarts.acrepair.signup.fragments.signup.SignupFragment"
+        android:name="com.gcoolservices.acrepair.signup.fragments.signup.SignupFragment"
         android:label="SignupFragment" />
 </navigation>
